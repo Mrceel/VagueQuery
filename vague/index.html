@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <script type="text/javascript" src='./js/vue.min.js'></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sousuo p {
+            color: #ccc;
+            font-size: 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .sousuo input {
+            width: 400px;
+            height: 50px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 30px auto 0; 
+        }
+
+        .con {
+            width: 400px;
+            margin: 30px auto 0;
+            position: relative;
+        }
+
+        .sousuo span {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-8px);
+        }
+
+        .div {
+            display: none;
+            color: red;
+            position: absolute;
+            left: 52%;
+            top: 30%;
+        }
+
+        .shaixuan {
+            margin: 30px auto;
+            overflow: hidden;
+        }
+
+        .shaixuan ul {
+            padding: 15px 0;
+            float: left;
+            width: 200px;
+            margin-right: 25px;
+            border: 1px #ccc solid;
+            border-radius: 10px;
+        }
+
+        .shaixuan ul li {
+            width: 100%;
+            line-height: 30px;            
+            margin: 5px auto;
+        }
+
+        .tu img{
+            margin-left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .shaixuan ul span {
+            display: block;
+            width: 150px;
+            height: 30px;
+            margin: 0 auto;
+            text-align: center;
+            border: 1px rgb(240, 159, 159) solid;
+            border-radius: 25px;
+            color: rgb(17, 17, 17);
+        }
+        p{
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='container'>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="sousuo">
+                    <p>Vague query</p>
+                    <div class="form-group con">
+                        <input type="text" v-model="value" placeholder="Search" class="form-control">
+                        <span class="glyphicon glyphicon-search" @click="search" aria-hidden="false"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-show='data_null' class="text-center" style="margin-top: 30px"><span>没有匹配数据...</span></div>
+        <div class="shaixuan" v-if="isshow">
+            <ul v-for="item in list">
+                <li class="tu"><img src="images/dog.jpg" alt=""></li>
+                <li><span>{{item.name}}</span></li>
+                <li><p class="text-center">{{item.age}}</p></li>
+                <li><p class="text-center">{{item.say}}</p></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        new Vue({
+            el: 'body',
+            data: {
+                list: [],
+                data_null:false,
+                len: '',
+                isshow: false,
+                value: ''
+            },
+            methods: {
+                search: function () {
+                    this.$http.get('http://localhost:8001/login', {
+                        'val': this.value
+                    }, {
+                        emulateJSON: true
+                    }).then(function (data) {
+                        
+                        if(!data.data){
+                            console.log('oo')
+                            this.data_null = true;
+                        }
+                        this.list = data.data;
+                        console.log(this.list)
+                        this.data_null = this.list.length ? false : true;
+                        this.len = this.list.length;
+                        this.isshow = true;
+                    }).catch(function (err) {
+                        console.log(err)
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
